@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 
-backend = "http://127.0.0.1:3000/"
+backend = "http://backend:3000/"
 
 options = json.load(open('options.json'))
 
@@ -16,13 +16,13 @@ def all_crimes_process() -> pd.DataFrame:
 @st.cache(suppress_st_warning=True, show_spinner=False)
 def date_process(date: dt.date) -> pd.DataFrame:
     """ function returns and caches dataframe with crimes filtered by date. """
-    if date != dt.date.today() + dt.timedelta(days=1):
+    if date != dt.date.today() + dt.timedelta(days=1): # default value for which we shouldn't collect data
         return pd.read_json(backend + 'date?date=' + str(date))
 
 @st.cache(suppress_st_warning=True, show_spinner=False)
 def type_process(option: str) -> pd.DataFrame:
     """ function returns and caches dataframe with crimes filtered by type. """
-    if option != '<select>':
+    if option != '<select>': # default value for which we shouldn't collect data
         return pd.read_json(backend + 'type?primary_type=' + option.replace(' ', '%20'))
 
 st.title("Task for Objective Platform")
@@ -31,7 +31,8 @@ st.write(
     """
     Test task for Objective Platform, which shows you map with
     crimes commited in Chicago. You may filter it by type of crime
-    or by date it was commited.
+    or by date it was commited. Due to weak computer power
+    I'll show only crimes, which were commited within the last 30 days.
     """
 )
 
@@ -59,7 +60,7 @@ st.pydeck_chart(
         initial_view_state=pdk.ViewState(
             latitude=41.88,
             longitude=-87.66,
-            zoom=7
+            zoom=9
         ),
         layers=[
             pdk.Layer(
@@ -67,14 +68,14 @@ st.pydeck_chart(
                 data=df_all,
                 get_position=['longitude', 'latitude'],
                 get_color=[0, 0, 200, 160],
-                get_radius=800,
+                get_radius=200,
             ),
             pdk.Layer(
                 'ScatterplotLayer',
                 data=df_dates,
                 get_position=['longitude', 'latitude'],
                 get_color=[200, 0, 0, 160],
-                get_radius=800,
+                get_radius=200,
             ),
             pdk.Layer(
                 'ScatterplotLayer',
