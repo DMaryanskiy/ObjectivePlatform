@@ -1,62 +1,25 @@
 import datetime as dt
+import json
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
 
 backend = "http://127.0.0.1:3000/"
 
-options = (
-    '<select>',
-    'HOMICIDE',
-    'CRIM SEXUAL ASSAULT',
-    'CRIMINAL SEXUAL ASSAULT',
-    'ROBBERY',
-    'BATTERY',
-    'PUBLIC PEACE VIOLATION',
-    'ASSAULT',
-    'STALKING',
-    'BURGLARY',
-    'THEFT',
-    'MOTOR VEHICLE THEFT',
-    'ARSON',
-    'HUMAN TRAFFICKING',
-    'DECEPTIVE PRACTICE',
-    'CRIMINAL DAMAGE',
-    'CRIMINAL TRESPASS',
-    'WEAPONS VIOLATION',
-    'CONCEALED CARRY LICENSE VIOLATION',
-    'PROSTITUTION',
-    'SEX OFFENSE',
-    'OFFENSE INVOLVING CHILDREN',
-    'GAMBLING',
-    'NARCOTICS',
-    'LIQUOR LAW VIOLATION',
-    'OTHER OFFENSE',
-    'INTERFERENCE WITH PUBLIC OFFICER',
-    'INTIMIDATION',
-    'KIDNAPPING',
-    'NON-CRIMINAL',
-    'OBSCENITY',
-    'OTHER NARCOTIC VIOLATION',
-    'PUBLIC INDECENCY',
-    'NON - CRIMINAL',
-    'NON-CRIMINAL (SUBJECT SPECIFIED)',
-    'RITUALISM',
-    'DOMESTIC VIOLENCE'
-)
+options = json.load(open('options.json'))
 
-@st.cache(suppress_st_warning=True)
+@st.cache(suppress_st_warning=True, show_spinner=False)
 def all_crimes_process() -> pd.DataFrame:
     """ function returns and caches dataframe with all crimes in Chicago. """
     return pd.read_json(backend)
 
-@st.cache(suppress_st_warning=True)
+@st.cache(suppress_st_warning=True, show_spinner=False)
 def date_process(date: dt.date) -> pd.DataFrame:
     """ function returns and caches dataframe with crimes filtered by date. """
     if date != dt.date.today() + dt.timedelta(days=1):
         return pd.read_json(backend + 'date?date=' + str(date))
 
-@st.cache(suppress_st_warning=True)
+@st.cache(suppress_st_warning=True, show_spinner=False)
 def type_process(option: str) -> pd.DataFrame:
     """ function returns and caches dataframe with crimes filtered by type. """
     if option != '<select>':
