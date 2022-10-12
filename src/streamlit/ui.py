@@ -32,7 +32,8 @@ st.write(
     Test task for Objective Platform, which shows you map with
     crimes commited in Chicago. You may filter it by type of crime
     or by date it was commited. Due to weak computer power
-    I'll show only crimes, which were commited within the last 30 days.
+    I'll show only crimes, which were commited within the last 30 days 
+    (shown blue).
     """
 )
 
