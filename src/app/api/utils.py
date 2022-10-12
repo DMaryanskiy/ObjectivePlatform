@@ -1,6 +1,7 @@
 import json
 from google.cloud import bigquery
 
+
 def query_to_json(query_job: bigquery.QueryJob) -> list:
     """ function to cast QueryJob object as JSON """
     df = query_job.to_dataframe()

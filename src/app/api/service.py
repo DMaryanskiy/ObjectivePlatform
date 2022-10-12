@@ -15,6 +15,7 @@ client = bigquery.Client() # binding connection with BigQuery
 
 router = APIRouter() # creating router
 
+
 @router.get("/", status_code=200, response_model=list[Crime])
 def get_all_crimes():
     """
