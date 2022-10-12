@@ -2,3 +2,4 @@ venv/
 .env
 plucky*.json
 __pycache__/
+.vscode
