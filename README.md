@@ -11,7 +11,7 @@ User may filter crimes by date and their type.
 1. Clone repo from GitHub.
 2. Create file `src/app/.env` and put there `GOOGLE_APPLICATION_CREDENTIALS="./google_credentials/<path_to_json_with_credentials>"`.
 To get credentials, use this [link](https://cloud.google.com/bigquery/docs/reference/libraries#setting_up_authentication).
-3. Put JSON with credentials to `src/app/google_credentials`.
+3. Create directory `src/app/google_credentials` and put JSON with credentials there.
 4. Go to `src` directory.
 5. Enter `docker-compose up`.
 6. Open [localhost:8501](localhost:8501).
