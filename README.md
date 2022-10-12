@@ -14,4 +14,4 @@ To get credentials, use this [link](https://cloud.google.com/bigquery/docs/refer
 3. Put JSON with credentials to `src/app/google_credentials`.
 4. Go to `src` directory.
 5. Enter `docker-compose up`.
-6. Open [localhost:8501](localhost:8501)
+6. Open [localhost:8501](localhost:8501).
