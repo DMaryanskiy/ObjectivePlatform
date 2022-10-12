@@ -16,44 +16,47 @@ def all_crimes_process() -> pd.DataFrame:
 @st.cache(suppress_st_warning=True, show_spinner=False)
 def date_process(date: dt.date) -> pd.DataFrame:
     """ function returns and caches dataframe with crimes filtered by date. """
-    if date != dt.date.today() + dt.timedelta(days=1): # default value for which we shouldn't collect data
-        return pd.read_json(backend + 'date?date=' + str(date))
+    return pd.read_json(backend + 'date?date=' + str(date))
 
 @st.cache(suppress_st_warning=True, show_spinner=False)
 def type_process(option: str) -> pd.DataFrame:
     """ function returns and caches dataframe with crimes filtered by type. """
-    if option != '<select>': # default value for which we shouldn't collect data
-        return pd.read_json(backend + 'type?primary_type=' + option.replace(' ', '%20'))
+    return pd.read_json(backend + 'type?primary_type=' + option.replace(' ', '%20'))
 
 st.title("Task for Objective Platform")
+
+if 'option' not in st.session_state:
+    st.session_state.option = '<select>'
 
 st.write(
     """
     Test task for Objective Platform, which shows you map with
     crimes commited in Chicago. You may filter it by type of crime
     or by date it was commited. Due to weak computer power
-    I'll show only crimes, which were commited within the last 30 days 
-    (shown blue).
+    I'll show only crimes, which were commited within the last year.
     """
 )
 
+df_all = all_crimes_process() # dataframe with coords of all crimes.
+
 date = st.date_input(
-    label="Choose the date of crime (will be shown red):",
+    label="Choose the date of crime:",
     value=dt.date.today() + dt.timedelta(days=1)
 ) # streamlit doesn't support empty values at the moment
 
-df_dates = pd.DataFrame(columns=['latitude', 'longitude'])
-df_dates = date_process(date) # dataframe with coords of crimes filtered by date.
+if date <= dt.date.today():
+    df_all = date_process(date) # dataframe with coords of crimes filtered by date.
 
 option = st.selectbox(
-    label="Choose the type of crime (will be shown green):",
+    label="Choose the type of crime:",
     options=options
 )
 
-df_types = pd.DataFrame(columns=['latitude', 'longitude'])
-df_types = type_process(option) # dataframe with coords of crimes filtered by type.
-
-df_all = all_crimes_process() # dataframe with coords of all crimes.
+if option != st.session_state.option:
+    st.session_state.option = option
+    df_all = type_process(option) # dataframe with coords of crimes filtered by type.
+else:
+    st.session_state.option = '<select>'
 
 st.pydeck_chart(
     pdk.Deck(
@@ -68,21 +71,7 @@ st.pydeck_chart(
                 'ScatterplotLayer',
                 data=df_all,
                 get_position=['longitude', 'latitude'],
-                get_color=[0, 0, 200, 160],
-                get_radius=200,
-            ),
-            pdk.Layer(
-                'ScatterplotLayer',
-                data=df_dates,
-                get_position=['longitude', 'latitude'],
                 get_color=[200, 0, 0, 160],
-                get_radius=200,
-            ),
-            pdk.Layer(
-                'ScatterplotLayer',
-                data=df_types,
-                get_position=['longitude', 'latitude'],
-                get_color=[0, 200, 0, 160],
                 get_radius=200,
             ),
         ],

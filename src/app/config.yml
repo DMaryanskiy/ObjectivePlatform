@@ -1,6 +1,6 @@
 GET_ALL_CRIMES: SELECT latitude, longitude
                   FROM bigquery-public-data.chicago_crime.crime
-                  WHERE date BETWEEN TIMESTAMP_SUB(current_timestamp(), INTERVAL 30 DAY) AND current_timestamp();
+                  WHERE date BETWEEN TIMESTAMP_SUB(current_timestamp(), INTERVAL 365 DAY) AND current_timestamp();
 
 GET_CRIMES_BY_TYPE: SELECT latitude, longitude
                     FROM bigquery-public-data.chicago_crime.crime
