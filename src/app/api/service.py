@@ -23,7 +23,7 @@ def get_all_crimes():
     Returns: JSON object with coordinates of crimes.
     """
     query_job = client.query(query=properties['GET_ALL_CRIMES'])
-    crimes_json = query_to_json(query_job=query_job)
+    crimes_json = query_to_json(query_job)
     return crimes_json
 
 @router.get('/type', status_code=200, response_model=list[Crime])
@@ -40,7 +40,7 @@ def get_crimes_by_type(primary_type: str):
         ]
     )
     query_job = client.query(query=properties['GET_CRIMES_BY_TYPE'], job_config=job_config)
-    crimes_json = query_to_json(query_job=query_job)
+    crimes_json = query_to_json(query_job)
     return crimes_json
 
 @router.get('/date', status_code=200, response_model=list[Crime])
@@ -57,5 +57,5 @@ def get_crimes_by_type(date: str):
         ]
     )
     query_job = client.query(query=properties['GET_CRIMES_BY_DATE'], job_config=job_config)
-    crimes_json = query_to_json(query_job=query_job)
+    crimes_json = query_to_json(query_job)
     return crimes_json
