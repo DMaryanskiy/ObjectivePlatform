@@ -37,7 +37,7 @@ st.write(
     """
 )
 
-df_all = all_crimes_process() # dataframe with coords of all crimes.
+df = all_crimes_process() # dataframe with coords of all crimes.
 
 date = st.date_input(
     label="Choose the date of crime:",
@@ -45,7 +45,7 @@ date = st.date_input(
 ) # streamlit doesn't support empty values at the moment
 
 if date <= dt.date.today():
-    df_all = date_process(date) # dataframe with coords of crimes filtered by date.
+    df = date_process(date) # dataframe with coords of crimes filtered by date.
 
 option = st.selectbox(
     label="Choose the type of crime:",
@@ -54,9 +54,15 @@ option = st.selectbox(
 
 if option != st.session_state.option:
     st.session_state.option = option
-    df_all = type_process(option) # dataframe with coords of crimes filtered by type.
+    df = type_process(option) # dataframe with coords of crimes filtered by type.
 else:
     st.session_state.option = '<select>'
+
+merge_df = st.checkbox(label="Show crimes filtered by date and type simultaneously")
+
+if merge_df:
+    # data gets out of cache, so it doesn't take much time
+    df = pd.merge(date_process(date), type_process(option), "outer")
 
 st.pydeck_chart(
     pdk.Deck(
@@ -69,7 +75,7 @@ st.pydeck_chart(
         layers=[
             pdk.Layer(
                 'ScatterplotLayer',
-                data=df_all,
+                data=df,
                 get_position=['longitude', 'latitude'],
                 get_color=[200, 0, 0, 160],
                 get_radius=200,
