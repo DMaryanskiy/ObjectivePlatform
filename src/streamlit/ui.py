@@ -4,9 +4,9 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 
-backend = "http://backend:3000/"
+backend = "http://backend:3000/" # url for API.
 
-options = json.load(open('options.json'))
+options = json.load(open('options.json')) # getting type of crimes from JSON file.
 
 @st.cache(suppress_st_warning=True, show_spinner=False)
 def all_crimes_process() -> pd.DataFrame:
@@ -23,10 +23,15 @@ def type_process(option: str) -> pd.DataFrame:
     """ function returns and caches dataframe with crimes filtered by type. """
     return pd.read_json(backend + 'type?primary_type=' + option.replace(' ', '%20'))
 
-st.title("Task for Objective Platform")
-
+# adding attributes to store values of last interaction.
 if 'option' not in st.session_state:
     st.session_state.option = '<select>'
+
+if 'date' not in st.session_state:
+    st.session_state.date = dt.date.today() + dt.timedelta(days=1)
+
+# showing title and description.
+st.title("Task for Objective Platform")
 
 st.write(
     """
@@ -37,20 +42,27 @@ st.write(
     """
 )
 
-df = all_crimes_process() # dataframe with coords of all crimes.
-
+# adding input widgets.
 date = st.date_input(
     label="Choose the date of crime:",
     value=dt.date.today() + dt.timedelta(days=1)
-) # streamlit doesn't support empty values at the moment
-
-if date <= dt.date.today():
-    df = date_process(date) # dataframe with coords of crimes filtered by date.
+) # streamlit doesn't support empty values at the moment.
 
 option = st.selectbox(
     label="Choose the type of crime:",
     options=options
 )
+
+merge_df = st.checkbox(label="Show crimes filtered by date and type simultaneously")
+
+df = all_crimes_process() # dataframe with coords of all crimes.
+
+# checking input and getting necessary data using API.
+if date < st.session_state.date:
+    st.session_state.date = date
+    df = date_process(date) # dataframe with coords of crimes filtered by date.
+else:
+    st.session_state.date = dt.date.today() + dt.timedelta(days=1)
 
 if option != st.session_state.option:
     st.session_state.option = option
@@ -58,12 +70,11 @@ if option != st.session_state.option:
 else:
     st.session_state.option = '<select>'
 
-merge_df = st.checkbox(label="Show crimes filtered by date and type simultaneously")
-
 if merge_df:
-    # data gets out of cache, so it doesn't take much time
+    # data gets out of cache, so it doesn't take much time.
     df = pd.merge(date_process(date), type_process(option), "outer")
 
+# adding map.
 st.pydeck_chart(
     pdk.Deck(
         map_style=None,
