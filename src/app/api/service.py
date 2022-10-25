@@ -44,7 +44,7 @@ def get_crimes_by_type(primary_type: str):
     return crimes_json
 
 @router.get('/date', status_code=200, response_model=list[Crime])
-def get_crimes_by_type(date: str):
+def get_crimes_by_date(date: str):
     """
     Endpoint to get crimes in Chicago by their date.
     Args:
